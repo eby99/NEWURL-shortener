@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: url-shortener
+    runtime: python3
+    buildCommand: "pip install -r requirements.txt"
+    startCommand: "gunicorn app:app --bind 0.0.0.0:$PORT"
+    plan: free
+    healthCheckPath: "/health"
+    disk:
+      name: url-shortener-disk
+      mountPath: /app/data
+      sizeGB: 1
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        value: sqlite:///data/urls.db
+    autoDeploy: true
+    branch: main
